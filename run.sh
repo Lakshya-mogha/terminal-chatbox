@@ -24,10 +24,23 @@ trap cleanup ERR INT
 
 read -p "Run (b) both server and client or (c) only client? [1/2]: " choice
 
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*|MINGW*|MSYS*) machine=Windows;;
+    *)          machine="UNKNOWN"
+esac
+
+
 if [[ "$choice" == "b" ]]; then
   echo -e "${GREEN}[1/6] Setting up the project...${RESET}"
   python3 -m venv venv
-  source venv/bin/activate
+  if [ "$machine" = "Linux" ] || [ "$machine" = "Mac" ]; then
+    source venv/bin/activate
+  elif [ "$machine" = "Windows" ]; then
+    source venv/Scripts/activate
+  fi
   pip install -r requirements.txt
 
   echo -e "${GREEN}[2/6] Starting server on port 8000...${RESET}"
@@ -59,10 +72,17 @@ if [[ "$choice" == "b" ]]; then
 
 else
   echo -e "${GREEN}Skipping server/ngrok. Launching client only...${RESET}"
+    python3 -m venv venv
+  if [ "$machine" = "Linux" ] || [ "$machine" = "Mac" ]; then
+    source venv/bin/activate
+  elif [ "$machine" = "Windows" ]; then
+    source venv/Scripts/activate
+  fi
+  pip install -r requirements.txt
   read -p "Enter server url: " SERVER_URL
   cd client
   sed -i "s|^SERVER_URL = .*|SERVER_URL = \"$SERVER_URL\"|" main.py
-  source ../venv/bin/activate
+  # source ../venv/bin/activate
 fi
 
 echo -e "${GREEN}[6/6] Launching client...${RESET}"

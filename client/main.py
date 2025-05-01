@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import threading
 
-SERVER_URL = "wss://8dd7-139-5-240-191.ngrok-free.app"
+SERVER_URL = "wss://0e84-139-5-240-191.ngrok-free.app"
 SERVER_URL += "/ws"
 print(SERVER_URL)
 def input_thread(send_queue):
